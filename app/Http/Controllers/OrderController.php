@@ -27,10 +27,11 @@ class OrderController extends Controller
             $item = Product::find($order_item->item_id);
             if ($item->quantity < $order_item->item_quantity || $item == null) {
                 return "failed";
-            } else if($item->deleted_at==null){
+            } else if($order_item->deleted_at==null){
                 $item->quantity -= $order_item->item_quantity;
                 $total += $order_item->items_quantity * ($item->price - ($item->price - ($item->price * $item->discount) / 100));//this equation can be added inside add/update product as it will calculate the total price just once
                 $order_item->deleted_at=DB::raw('CURRENT_TIMESTAMP');
+                $item->save();
                 $order_item->save();
             }
         }
